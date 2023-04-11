@@ -4,9 +4,8 @@ import uvicorn
 import torch
 import transformers
 
-from fastapi import FastAPI,HTTPException
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
-
 
 app = FastAPI()
 
@@ -23,13 +22,13 @@ class Prediction(BaseModel):
 model_name = "bert-base-uncased"
 tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
 file = open('128_weights.pkl', "rb")
-model = pickle.load(file)
+classifier = pickle.load(file)
 
 # Set the device to use for inference (GPU if available, otherwise CPU)
 #device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 device = "cpu"
-model.to(device)
-model.eval()
+classifier.to(device)
+classifier.eval()
 
 
 def is_special_characters_only(text):
@@ -58,7 +57,7 @@ def predict(text: TextInput) -> Prediction:
     # Make prediction
     try:
         with torch.no_grad():
-                outputs = model(input_ids= inputs['input_ids'].to(device))[0]
+                outputs = classifier(input_ids= inputs['input_ids'].to(device))[0]
                 prediction = torch.sigmoid(outputs).item() >= 0.5
                 return Prediction(is_italian=prediction)
 

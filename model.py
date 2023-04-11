@@ -1,10 +1,8 @@
 import pytorch_lightning as pl
-import torch
 import torch.nn as nn
-import torch.optim as optim
 import torchmetrics
 
-from transformers import BertModel, AutoModel, AdamW
+from transformers import  AutoModel, AdamW
 
 
 class BertClassifier(pl.LightningModule):
@@ -45,7 +43,7 @@ class BertClassifier(pl.LightningModule):
         return (nn.Sigmoid()(logits).view(-1) > self.cls_threshold).float()
 
     def training_step(self, batch, batch_idx):
-        input_ids = batch['input_ids'].float()
+        input_ids = batch['input_ids']
         attention_mask = batch['attention_mask']
         labels = batch['label'].view(-1).float()
 
@@ -96,6 +94,7 @@ class BertClassifier(pl.LightningModule):
         self.tsf1.update(preds, labels)
         self.tspr.update(preds, labels)
         self.tsrl.update(preds, labels)
+
 
         self.log('test_f1', self.tsf1, on_epoch=True, prog_bar=True)
         self.log('test_precision', self.tspr, on_epoch=True)

@@ -27,16 +27,11 @@ def train(seq_len):
     pickle.dump(model, file)
 
 def test_model(model_path, seq_len):
-    trainer = Trainer(
-        gpus=-1,
-        max_epochs=20,
-        logger=[CSVLogger(save_dir="logs/"), TensorBoardLogger(save_dir="logs/")],
-        callbacks=[ModelCheckpoint(save_top_k=1, save_last=1), TQDMProgressBar(refresh_rate=20)],
-    )
+    trainer = Trainer()
 
     # model = BertClassifier()
     # model.load_from_checkpoint(model_path)
-    file = open('512_ml_weights.pkl','rb')
+    file = open(model_path,'rb')
     model = pickle.load(file)
     data = PLData(seq_len=seq_len, trainfile="data/train.csv", testfile="data/test.csv", language="Italian", batchsize=32)
     data.setup(stage="")
@@ -47,6 +42,6 @@ if __name__ == "__main__":
     import time
     now = time.time()
     seed_everything(42)
-    train(seq_len=512)
-    test_model(model_path="logs/lightning_logs/version_52/checkpoints/last.ckpt", seq_len=128)
+    #train(seq_len=128)
+    test_model(model_path="128_weights.pkl", seq_len=128)
     print(time.time() - now)
