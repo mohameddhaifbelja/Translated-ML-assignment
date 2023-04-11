@@ -56,7 +56,14 @@ to build the image
 
 to run the image:
 
-```f```
+```docker run --publish 5000:5000 ```
+
+
+**To run it without docker**
+````commandline
+pip install -r requirements.txt
+python app.py
+````
 
 
 ## Exercise 2:
